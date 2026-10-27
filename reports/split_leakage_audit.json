@@ -1,0 +1,55 @@
+{
+  "tasks": {
+    "esol": {
+      "train_n": 893,
+      "validation_n": 112,
+      "test_n": 112,
+      "train_test_scaffold_overlap": 0
+    },
+    "freesolv": {
+      "train_n": 514,
+      "validation_n": 64,
+      "test_n": 64,
+      "train_test_scaffold_overlap": 0
+    },
+    "bbbp": {
+      "train_n": 1580,
+      "validation_n": 198,
+      "test_n": 197,
+      "train_test_scaffold_overlap": 0
+    },
+    "clintox_ct_tox": {
+      "train_n": 1169,
+      "validation_n": 146,
+      "test_n": 146,
+      "train_test_scaffold_overlap": 0
+    }
+  },
+  "cross_task_leakage": {
+    "esol": {
+      "freesolv": 1,
+      "bbbp": 4,
+      "clintox_ct_tox": 3
+    },
+    "freesolv": {
+      "esol": 21,
+      "bbbp": 2,
+      "clintox_ct_tox": 2
+    },
+    "bbbp": {
+      "esol": 4,
+      "freesolv": 0,
+      "clintox_ct_tox": 11
+    },
+    "clintox_ct_tox": {
+      "esol": 1,
+      "freesolv": 0,
+      "bbbp": 8
+    }
+  },
+  "global_split": {
+    "train_n": 3621,
+    "test_n": 452,
+    "molecule_overlap": 0
+  }
+}

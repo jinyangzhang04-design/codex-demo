@@ -1,0 +1,55 @@
+{
+  "model": "ECFP + PyTorch masked multi-task MLP with task heads",
+  "split_mode": "global",
+  "seed": 42,
+  "tasks": {
+    "esol": {
+      "train_n": 1017,
+      "validation_n": 47,
+      "test_n": 53,
+      "metrics": {
+        "n": 53,
+        "rmse": 1.6454768278307965,
+        "mae": 1.3062336569012336,
+        "r2": 0.20132992703656205
+      }
+    },
+    "freesolv": {
+      "train_n": 632,
+      "validation_n": 5,
+      "test_n": 5,
+      "metrics": {
+        "n": 5,
+        "rmse": 3.3084632498634883,
+        "mae": 2.786269748687744,
+        "r2": -0.24616437951601222
+      }
+    },
+    "bbbp": {
+      "train_n": 1492,
+      "validation_n": 243,
+      "test_n": 240,
+      "metrics": {
+        "n": 240,
+        "positive_rate": 0.7791666666666667,
+        "threshold": 0.6,
+        "roc_auc": 0.8530925234587832,
+        "pr_auc": 0.9492166433582203,
+        "f1": 0.9207161125319693
+      }
+    },
+    "clintox_ct_tox": {
+      "train_n": 1111,
+      "validation_n": 171,
+      "test_n": 179,
+      "metrics": {
+        "n": 179,
+        "positive_rate": 0.061452513966480445,
+        "threshold": 0.05,
+        "roc_auc": 0.6888528138528138,
+        "pr_auc": 0.1572320930823299,
+        "f1": 0.2028985507246377
+      }
+    }
+  }
+}

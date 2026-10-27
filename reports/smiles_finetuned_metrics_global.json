@@ -1,0 +1,55 @@
+{
+  "model": "pretrained SMILES Transformer + masked multi-task heads",
+  "split_mode": "global",
+  "seed": 42,
+  "tasks": {
+    "esol": {
+      "train_n": 1017,
+      "validation_n": 47,
+      "test_n": 53,
+      "metrics": {
+        "n": 53,
+        "rmse": 1.499131274704705,
+        "mae": 1.2582145428207685,
+        "r2": 0.33707682974625863
+      }
+    },
+    "freesolv": {
+      "train_n": 632,
+      "validation_n": 5,
+      "test_n": 5,
+      "metrics": {
+        "n": 5,
+        "rmse": 4.0412083318322365,
+        "mae": 3.795613725662231,
+        "r2": -0.8592816487809112
+      }
+    },
+    "bbbp": {
+      "train_n": 1492,
+      "validation_n": 243,
+      "test_n": 240,
+      "metrics": {
+        "n": 240,
+        "positive_rate": 0.7791666666666667,
+        "threshold": 0.65,
+        "roc_auc": 0.7896276864090404,
+        "pr_auc": 0.9169967562525438,
+        "f1": 0.8695652173913043
+      }
+    },
+    "clintox_ct_tox": {
+      "train_n": 1111,
+      "validation_n": 171,
+      "test_n": 179,
+      "metrics": {
+        "n": 179,
+        "positive_rate": 0.061452513966480445,
+        "threshold": 0.22499999999999998,
+        "roc_auc": 0.4832251082251082,
+        "pr_auc": 0.06855664130269623,
+        "f1": 0.1164021164021164
+      }
+    }
+  }
+}

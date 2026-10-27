@@ -18,12 +18,13 @@ def score(task,y,p,t=.5):
     return {'n':int(len(y)),'rmse':float(mean_squared_error(y,p)**.5),'mae':float(mean_absolute_error(y,p)),'r2':float(r2_score(y,p))}
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument('--checkpoint',default='artifacts/pretraining/smiles_mlm.pt');p.add_argument('--epochs',type=int,default=20);p.add_argument('--seed',type=int,default=42);a=p.parse_args();torch.manual_seed(a.seed);np.random.seed(a.seed)
+    p=argparse.ArgumentParser();p.add_argument('--checkpoint',default='artifacts/pretraining/smiles_mlm.pt');p.add_argument('--epochs',type=int,default=20);p.add_argument('--seed',type=int,default=42);p.add_argument('--split-mode',choices=['global','task'],default='global');a=p.parse_args();torch.manual_seed(a.seed);np.random.seed(a.seed)
     d=pd.read_csv(ROOT/'data/processed/joint_multitask.csv');s=pd.read_csv(ROOT/'data/processed/scaffold_splits.csv');tasks=[c for c in d if c!='smiles']; checkpoint=torch.load(ROOT/a.checkpoint,map_location='cpu'); tokenizer=SmilesTokenizer.from_state(checkpoint['tokenizer']); ids=torch.tensor([tokenizer.encode(v) for v in d.smiles],dtype=torch.long); y=d[tasks].to_numpy(float); observed=~np.isnan(y)
     config=checkpoint['config']; base=SmilesMLM(len(tokenizer.vocabulary),tokenizer.max_length,**config); base.load_state_dict(checkpoint['state_dict']); model=SmilesMultiTask(base.encoder,len(tasks)); optimizer=torch.optim.AdamW(model.parameters(),lr=5e-4,weight_decay=1e-4)
     target=np.nan_to_num(y,nan=0).astype(np.float32); mean=np.zeros(len(tasks),np.float32); scale=np.ones(len(tasks),np.float32); train=np.zeros_like(observed);val=np.zeros_like(observed)
     for i,t in enumerate(tasks):
-        train[:,i]=(s[f'split_{t}']=='train')&observed[:,i];val[:,i]=(s[f'split_{t}']=='validation')&observed[:,i]
+        split_column='split' if a.split_mode=='global' else f'split_{t}'
+        train[:,i]=(s[split_column]=='train')&observed[:,i];val[:,i]=(s[split_column]=='validation')&observed[:,i]
         if TASK_TYPES[t]=='regression': values=y[train[:,i],i];mean[i]=values.mean();scale[i]=max(values.std(),1e-6);target[:,i]=(target[:,i]-mean[i])/scale[i]
     tx,ty=ids,torch.from_numpy(target); tm,vm=torch.from_numpy(train),torch.from_numpy(val);best=None;best_loss=float('inf')
     def loss(mask):
@@ -44,9 +45,10 @@ def main():
     with torch.no_grad():output=model(tx).numpy()
     pred=output.copy()
     for i,t in enumerate(tasks):pred[:,i]=1/(1+np.exp(-np.clip(output[:,i],-30,30))) if TASK_TYPES[t]=='classification' else output[:,i]*scale[i]+mean[i]
-    report={'model':'pretrained SMILES Transformer + masked multi-task heads','seed':a.seed,'tasks':{}}
+    report={'model':'pretrained SMILES Transformer + masked multi-task heads','split_mode':a.split_mode,'seed':a.seed,'tasks':{}}
     for i,t in enumerate(tasks):
-        test=(s[f'split_{t}']=='test')&observed[:,i];th=threshold(y[val[:,i],i],pred[val[:,i],i]) if TASK_TYPES[t]=='classification' else .5;report['tasks'][t]={'train_n':int(train[:,i].sum()),'validation_n':int(val[:,i].sum()),'test_n':int(test.sum()),'metrics':score(t,y[test,i],pred[test,i],th)}
-    out=ROOT/'artifacts/smiles_finetuned';out.mkdir(parents=True,exist_ok=True);torch.save({'state_dict':model.state_dict(),'tokenizer':tokenizer.state(),'tasks':tasks,'mean':mean,'scale':scale},out/'model.pt');(ROOT/'reports/smiles_finetuned_metrics.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))
+        split_column='split' if a.split_mode=='global' else f'split_{t}'
+        test=(s[split_column]=='test')&observed[:,i];th=threshold(y[val[:,i],i],pred[val[:,i],i]) if TASK_TYPES[t]=='classification' else .5;report['tasks'][t]={'train_n':int(train[:,i].sum()),'validation_n':int(val[:,i].sum()),'test_n':int(test.sum()),'metrics':score(t,y[test,i],pred[test,i],th)}
+    out=ROOT/'artifacts/smiles_finetuned';out.mkdir(parents=True,exist_ok=True);torch.save({'state_dict':model.state_dict(),'tokenizer':tokenizer.state(),'tasks':tasks,'mean':mean,'scale':scale},out/f'{a.split_mode}_model.pt');(ROOT/f'reports/smiles_finetuned_metrics_{a.split_mode}.json').write_text(json.dumps(report,indent=2)+'\n');print(json.dumps(report,indent=2))
 
 if __name__=='__main__':main()

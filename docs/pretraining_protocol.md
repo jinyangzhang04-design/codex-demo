@@ -14,6 +14,6 @@
 - 回归任务使用训练集均值和标准差归一化；
 - 分类与回归任务均使用缺失标签掩码；
 - 使用各任务 validation split 做早停和分类阈值选择；
-- 最终只在各任务 test scaffold split 上报告指标。
+- 多任务主结果使用联合 scaffold split；各任务独立 scaffold split 只用于单任务基线和补充分析。
 
 当前结果见 `reports/smiles_pretraining.json` 和 `reports/smiles_finetuned_metrics.json`。该模型是本地可复现的预训练基线，不等同于大规模通用分子基础模型。
