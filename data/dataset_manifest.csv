@@ -1,5 +1,5 @@
 dataset,task_type,task_name,source_url,local_path,status
-ESOL,regression,measured log solubility,https://deepchemdata.s3-us-west-1.amazonaws.com/delaney-processed.csv,data/raw/esol.csv,pending
-FreeSolv,regression,hydration free energy,https://raw.githubusercontent.com/MobleyLab/FreeSolv/master/database.txt,data/raw/freesolv.csv,pending
-BBBP,classification,blood-brain barrier penetration,https://deepchemdata.s3-us-west-1.amazonaws.com/molnet_publish/bbbp.zip,data/raw/bbbp.zip,pending
-ClinTox,classification,clinical toxicity,https://deepchemdata.s3-us-west-1.amazonaws.com/molnet_publish/clintox.zip,data/raw/clintox.zip,pending
+ESOL,regression,measured log solubility,https://raw.githubusercontent.com/deepchem/deepchem/master/datasets/delaney-processed.csv,data/raw/esol.csv,downloaded
+FreeSolv,regression,hydration free energy,https://raw.githubusercontent.com/MobleyLab/FreeSolv/master/database.txt,data/raw/freesolv.txt,downloaded
+BBBP,classification,blood-brain barrier penetration,https://deepchemdata.s3-us-west-1.amazonaws.com/datasets/BBBP.csv,data/raw/BBBP.csv,downloaded
+ClinTox,classification,clinical trial toxicity,https://raw.githubusercontent.com/deepchem/deepchem/master/examples/clintox/datasets/clintox.csv.gz,data/raw/clintox.csv.gz,downloaded

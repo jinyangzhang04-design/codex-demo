@@ -1,0 +1,88 @@
+{
+  "datasets": {
+    "esol": {
+      "rows": 1117,
+      "columns": [
+        "smiles",
+        "esol"
+      ],
+      "unique_smiles": 1117
+    },
+    "freesolv": {
+      "rows": 642,
+      "columns": [
+        "smiles",
+        "freesolv"
+      ],
+      "unique_smiles": 642
+    },
+    "bbbp": {
+      "rows": 1975,
+      "columns": [
+        "smiles",
+        "bbbp"
+      ],
+      "unique_smiles": 1975
+    },
+    "clintox": {
+      "rows": 1461,
+      "columns": [
+        "smiles",
+        "clintox_ct_tox"
+      ],
+      "unique_smiles": 1461
+    }
+  },
+  "available_datasets": [
+    "esol",
+    "freesolv",
+    "bbbp",
+    "clintox"
+  ],
+  "joint": {
+    "rows": 4526,
+    "tasks": [
+      "esol",
+      "freesolv",
+      "bbbp",
+      "clintox_ct_tox"
+    ],
+    "missing_by_task": {
+      "esol": 3409,
+      "freesolv": 3884,
+      "bbbp": 2551,
+      "clintox_ct_tox": 3065
+    },
+    "split_counts": {
+      "train": 3621,
+      "validation": 453,
+      "test": 452
+    },
+    "task_split_counts": {
+      "esol": {
+        "unused": 3409,
+        "train": 893,
+        "validation": 112,
+        "test": 112
+      },
+      "freesolv": {
+        "unused": 3884,
+        "train": 514,
+        "validation": 64,
+        "test": 64
+      },
+      "bbbp": {
+        "unused": 2551,
+        "train": 1580,
+        "validation": 198,
+        "test": 197
+      },
+      "clintox_ct_tox": {
+        "unused": 3065,
+        "train": 1169,
+        "test": 146,
+        "validation": 146
+      }
+    }
+  }
+}
