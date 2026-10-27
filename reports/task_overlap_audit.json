@@ -1,0 +1,18 @@
+{
+  "rows_in_joint_table": 4526,
+  "task_counts": {
+    "esol": 1117,
+    "freesolv": 642,
+    "bbbp": 1975,
+    "clintox_ct_tox": 1461
+  },
+  "pairwise_common_molecules": {
+    "esol__freesolv": 340,
+    "esol__bbbp": 93,
+    "esol__clintox_ct_tox": 64,
+    "freesolv__bbbp": 38,
+    "freesolv__clintox_ct_tox": 11,
+    "bbbp__clintox_ct_tox": 202
+  },
+  "molecules_with_all_four_tasks": 4
+}
