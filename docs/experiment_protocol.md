@@ -10,4 +10,4 @@
 
 ## 当前数据版本
 
-首轮数据来自 DeepChem 官方仓库中的 ESOL、BBBP、ClinTox 文件，以及 MobleyLab FreeSolv 的 `database.txt`。下载脚本会重新获取这些来源，处理脚本会生成 `data/processed/joint_multitask.csv`、任务划分和 `reports/data_audit.json`。
+首轮数据来自 DeepChem 官方仓库固定提交中的 ESOL、BBBP、ClinTox 文件，以及 MobleyLab FreeSolv 固定提交中的 `database.txt`。具体提交号和地址记录在 `data/dataset_manifest.csv`；下载脚本会重新获取这些来源，处理脚本会生成 `data/processed/joint_multitask.csv`、任务划分和 `reports/data_audit.json`。
