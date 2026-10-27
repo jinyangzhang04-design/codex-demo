@@ -8,10 +8,13 @@ class MultiTaskNet(nn.Module):
     def __init__(self, n_features, n_tasks, hidden=256):
         super().__init__()
         self.encoder = nn.Sequential(nn.Linear(n_features, hidden), nn.ReLU(), nn.Dropout(0.1), nn.Linear(hidden, 128), nn.ReLU())
-        self.head = nn.Linear(128, n_tasks)
+        # Task-specific adapters reduce negative transfer between regression
+        # and highly imbalanced classification labels.
+        self.heads = nn.ModuleList([nn.Sequential(nn.Linear(128, 64), nn.ReLU(), nn.Linear(64, 1)) for _ in range(n_tasks)])
 
     def forward(self, x):
-        return self.head(self.encoder(x))
+        representation = self.encoder(x)
+        return torch.cat([head(representation) for head in self.heads], dim=1)
 
 @dataclass
 class TorchMaskedMultiTask:

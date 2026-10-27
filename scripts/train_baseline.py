@@ -14,10 +14,16 @@ from drugscreen.features.descriptors import featurize
 
 ROOT = Path(__file__).resolve().parents[1]
 
-def metric(task, y_true, pred):
+def select_threshold(y_true, pred):
+    if len(y_true) == 0 or len(np.unique(y_true)) < 2:
+        return 0.5
+    thresholds = np.linspace(0.05, 0.95, 37)
+    return float(max(thresholds, key=lambda threshold: f1_score(y_true, pred >= threshold, zero_division=0)))
+
+def metric(task, y_true, pred, threshold=0.5):
     if task in {"bbbp", "clintox_ct_tox"}:
-        labels = (pred >= 0.5).astype(int)
-        result = {"n": int(len(y_true)), "positive_rate": float(np.mean(y_true))}
+        labels = (pred >= threshold).astype(int)
+        result = {"n": int(len(y_true)), "positive_rate": float(np.mean(y_true)), "threshold": float(threshold)}
         for name, fn in (("roc_auc", roc_auc_score), ("pr_auc", average_precision_score), ("f1", f1_score)):
             try:
                 result[name] = float(fn(y_true, pred if name != "f1" else labels))
@@ -27,25 +33,30 @@ def metric(task, y_true, pred):
     return {"n": int(len(y_true)), "rmse": float(mean_squared_error(y_true, pred) ** 0.5), "mae": float(mean_absolute_error(y_true, pred)), "r2": float(r2_score(y_true, pred))}
 
 def run_seed(data, splits, features, tasks, seed):
-    reports, models = {}, {}
+    reports, models, thresholds = {}, {}, {}
     for task in tasks:
         observed = data[task].notna().to_numpy()
         task_split = splits[f"split_{task}"].to_numpy()
         train = observed & (task_split == "train")
         test = observed & (task_split == "test")
+        validation = observed & (task_split == "validation")
         x_train, y_train = features[train], data.loc[train, task].to_numpy()
         x_test, y_test = features[test], data.loc[test, task].to_numpy()
         if task in {"bbbp", "clintox_ct_tox"}:
             model = RandomForestClassifier(n_estimators=300, random_state=seed, n_jobs=-1, class_weight="balanced")
             model.fit(x_train, y_train.astype(int))
             pred = model.predict_proba(x_test)[:, 1] if len(model.classes_) == 2 else np.full(len(y_test), float(model.classes_[0]))
+            pred_validation = model.predict_proba(features[validation])[:, 1] if len(model.classes_) == 2 else np.full(int(validation.sum()), float(model.classes_[0]))
+            threshold = select_threshold(data.loc[validation, task].to_numpy().astype(int), pred_validation)
         else:
             model = RandomForestRegressor(n_estimators=300, random_state=seed, n_jobs=-1)
             model.fit(x_train, y_train)
             pred = model.predict(x_test)
-        reports[task] = {"train_n": int(train.sum()), "test_n": int(test.sum()), "metrics": metric(task, y_test, pred)}
+            threshold = 0.5
+        reports[task] = {"train_n": int(train.sum()), "validation_n": int(validation.sum()), "test_n": int(test.sum()), "metrics": metric(task, y_test, pred, threshold)}
         models[task] = model
-    return reports, models
+        thresholds[task] = threshold
+    return reports, models, thresholds
 
 def main():
     parser = argparse.ArgumentParser()
@@ -58,9 +69,9 @@ def main():
     features = np.vstack([featurize(smiles) for smiles in data.smiles])
     seeds = [int(value) for value in args.seeds.split(",")] if args.seeds else [args.seed]
     runs = []
-    models = None
+    models, thresholds = None, None
     for seed in seeds:
-        reports, models = run_seed(data, splits, features, tasks, seed)
+        reports, models, thresholds = run_seed(data, splits, features, tasks, seed)
         runs.append({"seed": seed, "tasks": reports})
     aggregate = {}
     for task in tasks:
@@ -68,7 +79,7 @@ def main():
         aggregate[task] = {name: {"mean": float(np.mean([run["tasks"][task]["metrics"][name] for run in runs])), "std": float(np.std([run["tasks"][task]["metrics"][name] for run in runs]))} for name in metric_names}
     output = ROOT / "artifacts" / "baseline"
     output.mkdir(parents=True, exist_ok=True)
-    joblib.dump({"models": models, "tasks": tasks, "feature_size": int(features.shape[1])}, output / "ecfp_random_forest.joblib")
+    joblib.dump({"models": models, "thresholds": thresholds, "tasks": tasks, "feature_size": int(features.shape[1])}, output / "ecfp_random_forest.joblib")
     (ROOT / "reports").mkdir(exist_ok=True)
     (ROOT / "reports/baseline_metrics.json").write_text(json.dumps({"model": "ECFP + Random Forest", "seeds": seeds, "runs": runs, "aggregate": aggregate}, indent=2) + "\n")
     print(json.dumps({"seeds": seeds, "aggregate": aggregate}, indent=2))
