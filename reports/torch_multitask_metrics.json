@@ -1,0 +1,52 @@
+{
+  "model": "ECFP + PyTorch masked multi-task MLP",
+  "seed": 42,
+  "tasks": {
+    "esol": {
+      "train_n": 893,
+      "validation_n": 112,
+      "test_n": 112,
+      "metrics": {
+        "n": 112,
+        "rmse": 1.5209283357896466,
+        "mae": 1.3082964244399753,
+        "r2": 0.5321289306325084
+      }
+    },
+    "freesolv": {
+      "train_n": 514,
+      "validation_n": 64,
+      "test_n": 64,
+      "metrics": {
+        "n": 64,
+        "rmse": 5.261507026527532,
+        "mae": 3.396364193484187,
+        "r2": 0.07028768992976975
+      }
+    },
+    "bbbp": {
+      "train_n": 1580,
+      "validation_n": 198,
+      "test_n": 197,
+      "metrics": {
+        "n": 197,
+        "positive_rate": 0.7411167512690355,
+        "roc_auc": 0.8562986838571044,
+        "pr_auc": 0.9342104220198602,
+        "f1": 0.8770764119601329
+      }
+    },
+    "clintox_ct_tox": {
+      "train_n": 1169,
+      "validation_n": 146,
+      "test_n": 146,
+      "metrics": {
+        "n": 146,
+        "positive_rate": 0.0547945205479452,
+        "roc_auc": 0.7672101449275363,
+        "pr_auc": 0.11682902447800121,
+        "f1": 0.0
+      }
+    }
+  }
+}
