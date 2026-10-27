@@ -1,0 +1,54 @@
+{
+  "model": "pretrained SMILES Transformer + masked multi-task heads",
+  "seed": 42,
+  "tasks": {
+    "esol": {
+      "train_n": 893,
+      "validation_n": 112,
+      "test_n": 112,
+      "metrics": {
+        "n": 112,
+        "rmse": 1.750071558573701,
+        "mae": 1.4015229699441367,
+        "r2": 0.3805299656061506
+      }
+    },
+    "freesolv": {
+      "train_n": 514,
+      "validation_n": 64,
+      "test_n": 64,
+      "metrics": {
+        "n": 64,
+        "rmse": 5.623747916263794,
+        "mae": 4.020615307092666,
+        "r2": -0.0621355925580791
+      }
+    },
+    "bbbp": {
+      "train_n": 1580,
+      "validation_n": 198,
+      "test_n": 197,
+      "metrics": {
+        "n": 197,
+        "positive_rate": 0.7411167512690355,
+        "threshold": 0.625,
+        "roc_auc": 0.7123287671232877,
+        "pr_auc": 0.8551567535184467,
+        "f1": 0.8417910447761194
+      }
+    },
+    "clintox_ct_tox": {
+      "train_n": 1169,
+      "validation_n": 146,
+      "test_n": 146,
+      "metrics": {
+        "n": 146,
+        "positive_rate": 0.0547945205479452,
+        "threshold": 0.05,
+        "roc_auc": 0.40851449275362317,
+        "pr_auc": 0.054193037881981904,
+        "f1": 0.1038961038961039
+      }
+    }
+  }
+}
